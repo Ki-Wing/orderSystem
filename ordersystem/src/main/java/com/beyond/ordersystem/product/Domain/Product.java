@@ -24,16 +24,16 @@ public class Product extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String category;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private Integer price;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private Integer stockQuantity;
 
     private String imagePath;
@@ -52,5 +52,12 @@ public class Product extends BaseTimeEntity {
                 .imagePath(this.imagePath)
                 .build();
     }
+    public void updateStockQuantity(int quantity) {
+        if (this.stockQuantity < quantity) {
+            throw new IllegalArgumentException("재고부족");
+        }
+        this.stockQuantity -= quantity;
+    }
+
 }
 

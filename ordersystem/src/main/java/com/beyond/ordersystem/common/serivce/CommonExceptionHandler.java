@@ -1,5 +1,6 @@
-package com.beyond.ordersystem.common.dto;
+package com.beyond.ordersystem.common.serivce;
 
+import com.beyond.ordersystem.common.dto.CommonErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -29,5 +30,11 @@ public class CommonExceptionHandler {
     public ResponseEntity<CommonErrorDto> validHandler(IllegalArgumentException e){
         CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST.value(),"argument is not valid");
         return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<CommonErrorDto> exceptionHandler(Exception e){
+        CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.INTERNAL_SERVER_ERROR.value(),"[Server error]");
+        return new ResponseEntity<>(commonErrorDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -11,23 +11,37 @@ import lombok.NoArgsConstructor;
 
 import java.util.*;
 
+//주문 등록(/order/create) :
+//      memberId, [productId, productCount]
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class OrderSaveReqDto {
     private Long memberId;
-    private List<OrderDetailDto> orderDetailDtoList;
+    private List<OrderDto> orderDtos;
 
+    
+    // 별도 클래스니까 어노테이션 붙어야함
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class OrderDetailDto {
+    public static class OrderDto {
         private Long productId;
         private Integer productCount;
 
     }
 
+    public Ordering toEntity(Member member){
+        return Ordering.builder()
+                .member(member)
+//                .orderStatus(OrderStatus.ORDERED)
+                .build();
+    }
 
 }
+
+
+

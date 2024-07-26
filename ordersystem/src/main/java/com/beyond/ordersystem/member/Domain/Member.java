@@ -37,8 +37,8 @@ public class Member extends BaseTimeEntity {
     private Address address;
 
     @Column(nullable = false)
-    @Builder.Default
     @Enumerated(value = EnumType.STRING)
+    @Builder.Default
     private Role role = Role.USER;
 
 

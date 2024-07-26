@@ -27,3 +27,6 @@ spring:
 logging:
   level:
     root: info
+jwt:
+  expiration : 30
+  secretKey : my_token_secret

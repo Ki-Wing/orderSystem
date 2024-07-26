@@ -32,7 +32,7 @@ public class ProductController {
     @PostMapping("/create")
     public ResponseEntity<?> createMember(@ModelAttribute ProductSaveReqDto dto) {
         Product product = productService.createProduct(dto);
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "product is succuessful create", product.getId());
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "[succuessed]product is create", product.getId());
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 
