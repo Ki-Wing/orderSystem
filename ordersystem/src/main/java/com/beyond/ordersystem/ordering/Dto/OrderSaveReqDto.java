@@ -19,20 +19,21 @@ import java.util.*;
 @AllArgsConstructor
 @Builder
 public class OrderSaveReqDto {
-    private Long memberId;
-    private List<OrderDto> orderDtos;
-
+//    private Long memberId;
+//    private List<OrderDto> orderDtos;
+    private Long productId;
+    private Integer productCount;
     
     // 별도 클래스니까 어노테이션 붙어야함
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class OrderDto {
-        private Long productId;
-        private Integer productCount;
-
-    }
+//    @Data
+//    @NoArgsConstructor
+//    @AllArgsConstructor
+//    @Builder
+//    public static class OrderDto {
+//        private Long productId;
+//        private Integer productCount;
+//
+//    }
 
     public Ordering toEntity(Member member){
         return Ordering.builder()

@@ -21,7 +21,7 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     generate-ddl: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
 
 logging:
@@ -30,3 +30,5 @@ logging:
 jwt:
   expiration : 30
   secretKey : my_token_secret
+  expirationRT : 14400
+  secretKeyRT : hackerton_secret

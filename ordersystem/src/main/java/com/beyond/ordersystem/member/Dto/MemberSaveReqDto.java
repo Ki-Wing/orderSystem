@@ -3,6 +3,7 @@ import com.beyond.ordersystem.common.domain.Address;
 import com.beyond.ordersystem.member.Domain.Member;
 import com.beyond.ordersystem.member.Domain.Role;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class MemberSaveReqDto {
     private String name;
 
@@ -28,7 +30,7 @@ public class MemberSaveReqDto {
 //    private String street;
 //    private String zipcode;
 
-    private Role role;
+    private Role role = Role.USER;
 
     public Member toEntity(String password) {
         return Member.builder()
@@ -40,7 +42,7 @@ public class MemberSaveReqDto {
 //                    .city(this.city).street(this.street).zipcode(this.zipcode)
 //                        build())
 //                .role(this.role)
-                .role(Role.USER)
+                .role(this.role)
                 .build();
     }
 }
