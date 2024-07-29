@@ -16,9 +16,11 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @RequestMapping("/member")
 @RestController
@@ -39,12 +42,15 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final jwtTokenprovider jwtTokenProvider;
+    @Qualifier("2")
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    public MemberController(MemberService memberService, MemberRepository memberRepository, jwtTokenprovider jwtTokenProvider) {
+    public MemberController(MemberService memberService, MemberRepository memberRepository, jwtTokenprovider jwtTokenProvider, @Qualifier("2") RedisTemplate<String, Object> redisTemplate) {
         this.memberService = memberService;
         this.memberRepository = memberRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.redisTemplate = redisTemplate;
     }
     @PostMapping("/create")
     public ResponseEntity<?> memberCreate (@Valid @RequestBody MemberSaveReqDto createDto) {
@@ -78,20 +84,23 @@ public class MemberController {
 
 
     @PostMapping("/doLogin")
-    public ResponseEntity<?> doLogin(@RequestBody MemberLoginDto dto){
-        // email, password 가 일치하는지 검증
+    public ResponseEntity doLogin(@RequestBody MemberLoginDto dto) {
+
+        // email, password가 일치한지 검증
         Member member = memberService.login(dto);
+
         // 일치할 경우 accessToken 생성
         String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
         String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail(), member.getRole().toString());
 
-        // 생성된 토큰을 CommonResDto 에 담아 사용자에게 return.
+        // redis에 email과 rt를 key:value로 하여 저장
+        redisTemplate.opsForValue().set(member.getEmail(), refreshToken, 240, TimeUnit.HOURS); // 240시간
+        // 생성된 토큰을 commonResDto에 담아 사용자에게 return
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("id", member.getId());
         loginInfo.put("token", jwtToken);
         loginInfo.put("refreshToken", refreshToken);
-
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "로그인 성공 !", loginInfo);
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "login is successful", loginInfo);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
@@ -101,6 +110,8 @@ public class MemberController {
         Claims claims = null;
 
         try {
+            
+            // 코드를 통해 rt 검증
             claims = Jwts.parser()
                     .setSigningKey(secretKey)
                     .parseClaimsJws(rt)
@@ -111,9 +122,16 @@ public class MemberController {
         }
         String email = claims.getSubject();
         String role = claims.get("role").toString();
+        
+        //redis를 조회하여 rt 추가 검증
+        Object obj = redisTemplate.opsForValue().get(email);
+//        if(obj == null || (obj != null && !obj.toString().equals(rt))){
+        if(obj == null || !obj.toString().equals(rt)){
+            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.UNAUTHORIZED.value(),
+                    "invalid refresh roken"), HttpStatus.UNAUTHORIZED);
+        }
 
         String newAt = jwtTokenProvider.createToken(email, role);
-
         Map<String, Object> info = new HashMap<>();
         info.put("token", newAt);
 

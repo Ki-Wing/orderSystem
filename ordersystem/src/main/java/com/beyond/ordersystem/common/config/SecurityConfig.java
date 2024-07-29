@@ -35,7 +35,7 @@ public class SecurityConfig {
                     .httpBasic().disable()
                     .authorizeRequests()
                     // 예외 url만 허용하겠다.
-                        .antMatchers("/member/create", "/","/member/doLogin")
+                        .antMatchers("/member/create", "/","/member/doLogin","/member/refresh-token")
                         .permitAll()
                     .anyRequest().authenticated()
                     .and()
