@@ -48,6 +48,30 @@ public class ProductService {
 
     }
 
+    @Transactional
+    public Product awscreateProduct(ProductSaveReqDto dto) {
+        MultipartFile image = dto.getProductimage();
+        Product product=null;
+        try {
+            product = productRepository.save(dto.toEntity());
+            byte[] bytes = image.getBytes();
+            Path path = Paths.get("C:/Users/Playdata/Desktop/tmp/",
+                    product.getId() + "_" + image.getOriginalFilename());
+            Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            product.updateImagePath(path.toString()); //더티췝~
+        }catch (IOException e){
+            throw new RuntimeException("[Failed] Image Save");
+        }
+        return product;
+
+    }
+
+
+
+
+
+
+
     public Page<ProductResDto> listProducts(Pageable pageable) {
         Page<Product> products = productRepository.findAll(pageable);
 //        Page<MemberResDto> memberResDtos = members.map(a->a.fromEntity());

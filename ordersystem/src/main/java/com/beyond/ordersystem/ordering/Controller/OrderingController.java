@@ -22,12 +22,12 @@ public class OrderingController {
         this.orderingService = orderingService;
     }
 
+
     @PostMapping("/create")
     public ResponseEntity<?> orderCreate(@RequestBody List<OrderSaveReqDto> dto) {
         Ordering ordering = orderingService.orderCreate(dto);
         CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "정상완료", ordering.getId());
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
-
     }
 
     @PreAuthorize("hasRole('ADMIN')")
