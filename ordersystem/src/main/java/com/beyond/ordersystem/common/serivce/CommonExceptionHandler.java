@@ -3,6 +3,7 @@ package com.beyond.ordersystem.common.serivce;
 import com.beyond.ordersystem.common.dto.CommonErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentConversionNotSupportedException;
@@ -28,11 +29,11 @@ public class CommonExceptionHandler {
             return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(MethodArgumentConversionNotSupportedException.class)
-    public ResponseEntity<CommonErrorDto> validHandler(IllegalArgumentException e){
+    // validation 에러 잡아가기
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CommonErrorDto> validHandler(MethodArgumentNotValidException e) {
         e.printStackTrace();
-
-        CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST.value(),"argument is not valid");
+        CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST.value(), e.getFieldError().getDefaultMessage());
         return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
     }
 
@@ -43,4 +44,5 @@ public class CommonExceptionHandler {
         CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.INTERNAL_SERVER_ERROR.value(),"[Server error]");
         return new ResponseEntity<>(commonErrorDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 }

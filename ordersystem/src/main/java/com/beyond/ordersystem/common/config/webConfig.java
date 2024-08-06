@@ -8,10 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class webConfig {
 
-
     @Bean
-    public PasswordEncoder passwordEncoder(){
-
+    public PasswordEncoder makePassword() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 

@@ -4,6 +4,7 @@ import com.beyond.ordersystem.member.Domain.Member;
 import com.beyond.ordersystem.member.Dto.MemberLoginDto;
 import com.beyond.ordersystem.member.Dto.MemberResDto;
 import com.beyond.ordersystem.member.Dto.MemberSaveReqDto;
+import com.beyond.ordersystem.member.Dto.ResetPasswordDto;
 import com.beyond.ordersystem.member.Repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -60,6 +61,14 @@ public class MemberService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         return member;
+    }
+
+    public void resetPassword(ResetPasswordDto dto){
+        Member member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
+        if(!passwordEncoder.matches(dto.getAsIsPassword(), member.getPassword())){
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        member.updatePassword(passwordEncoder.encode(dto.getToBePassword()));
     }
 
 

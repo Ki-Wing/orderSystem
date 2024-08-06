@@ -18,6 +18,7 @@ public class MemberResDto {
         private String email;
         private Address address;
         private Role role;
+        private int orderCount;
 
 
     }

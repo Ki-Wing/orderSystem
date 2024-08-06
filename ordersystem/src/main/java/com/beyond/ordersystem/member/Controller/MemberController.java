@@ -4,10 +4,7 @@ import com.beyond.ordersystem.common.auth.jwtTokenprovider;
 import com.beyond.ordersystem.common.dto.CommonErrorDto;
 import com.beyond.ordersystem.common.dto.CommonResDto;
 import com.beyond.ordersystem.member.Domain.Member;
-import com.beyond.ordersystem.member.Dto.MemberLoginDto;
-import com.beyond.ordersystem.member.Dto.MemberRefreshDto;
-import com.beyond.ordersystem.member.Dto.MemberResDto;
-import com.beyond.ordersystem.member.Dto.MemberSaveReqDto;
+import com.beyond.ordersystem.member.Dto.*;
 import com.beyond.ordersystem.member.Repository.MemberRepository;
 import com.beyond.ordersystem.member.Service.MemberService;
 import io.jsonwebtoken.Claims;
@@ -83,6 +80,13 @@ public class MemberController {
     }
 
 
+    @PatchMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDto dto) {
+        memberService.resetPassword(dto);
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "password is renewed" , "ok");
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
+
     @PostMapping("/doLogin")
     public ResponseEntity doLogin(@RequestBody MemberLoginDto dto) {
 
@@ -117,8 +121,8 @@ public class MemberController {
                     .parseClaimsJws(rt)
                     .getBody();
         }catch (Exception e) {
-            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.UNAUTHORIZED.value(),
-                    "invalid refresh roken"), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.BAD_REQUEST.value(),
+                    "invalid refresh roken"), HttpStatus.BAD_REQUEST);
         }
         String email = claims.getSubject();
         String role = claims.get("role").toString();
@@ -127,8 +131,8 @@ public class MemberController {
         Object obj = redisTemplate.opsForValue().get(email);
 //        if(obj == null || (obj != null && !obj.toString().equals(rt))){
         if(obj == null || !obj.toString().equals(rt)){
-            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.UNAUTHORIZED.value(),
-                    "invalid refresh roken"), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.BAD_REQUEST.value(),
+                    "invalid refresh roken"), HttpStatus.BAD_REQUEST);
         }
 
         String newAt = jwtTokenProvider.createToken(email, role);

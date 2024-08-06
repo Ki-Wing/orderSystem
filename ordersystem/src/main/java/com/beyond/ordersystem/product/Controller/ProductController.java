@@ -33,7 +33,9 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> createMember(@ModelAttribute ProductSaveReqDto dto) {
-        Product product = productService.awscreateProduct(dto);
+//        Product product = productService.awscreateProduct(dto);
+        Product product = productService.createProduct(dto);
+
         CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "[succuessed]product is create", product.getId());
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
