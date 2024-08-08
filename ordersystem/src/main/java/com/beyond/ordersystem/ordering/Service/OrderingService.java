@@ -118,10 +118,10 @@ public class OrderingService {
         return orderListResDtos;
     }
 
-    public Ordering orderCancle(Long id){
+    public Ordering orderCancel(Long id){
         Ordering ordering = orderingRepository.findById(id)
                 .orElseThrow(()-> new EntityNotFoundException("not found order"));
-        ordering.updateStatus(OrderStatus.CANCELLED);
+        ordering.updateStatus(OrderStatus.CANCELED);
         return ordering;
     }
 }

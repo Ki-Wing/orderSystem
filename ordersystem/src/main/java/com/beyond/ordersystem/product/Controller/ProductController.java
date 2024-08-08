@@ -8,6 +8,7 @@ import com.beyond.ordersystem.member.Service.MemberService;
 import com.beyond.ordersystem.product.Domain.Product;
 import com.beyond.ordersystem.product.Dto.ProductResDto;
 import com.beyond.ordersystem.product.Dto.ProductSaveReqDto;
+import com.beyond.ordersystem.product.Dto.ProductSearchDto;
 import com.beyond.ordersystem.product.Service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -31,21 +32,22 @@ public class ProductController {
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/create")
+    @PostMapping("/create")                 //requsetbody 없으니까 form-data 형식으로
     public ResponseEntity<?> createMember(@ModelAttribute ProductSaveReqDto dto) {
-//        Product product = productService.awscreateProduct(dto);
-        Product product = productService.createProduct(dto);
+        Product product = productService.awscreateProduct(dto);
+//        Product product = productService.createProduct(dto);
 
         CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "[succuessed]product is create", product.getId());
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> listProducts(Pageable pageable) {
-        Page<ProductResDto> dtos = productService.listProducts(pageable);
+    public ResponseEntity<?> listProducts(ProductSearchDto searchDto, Pageable pageable) {
+        Page<ProductResDto> dtos = productService.listProducts(searchDto,pageable);
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "[succuessed] products are found", dtos);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
+
 
 }
 

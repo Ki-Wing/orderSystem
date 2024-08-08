@@ -12,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
-
 @RestController
 @RequestMapping("/order")
 public class OrderingController {
@@ -29,6 +28,7 @@ public class OrderingController {
         CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "정상완료", ordering.getId());
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list")
@@ -53,7 +53,7 @@ public class OrderingController {
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<?> orderCancel(@PathVariable Long id) {
-        Ordering ordering = orderingService.orderCancle(id);
+        Ordering ordering = orderingService.orderCancel(id);
         CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "취소 완료", ordering.getId());
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
 
