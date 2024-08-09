@@ -6,6 +6,7 @@ import com.beyond.ordersystem.member.Domain.Member;
 import com.beyond.ordersystem.member.Dto.MemberLoginDto;
 import com.beyond.ordersystem.member.Dto.MemberResDto;
 import com.beyond.ordersystem.member.Repository.MemberRepository;
+import com.beyond.ordersystem.ordering.Controller.SSEController;
 import com.beyond.ordersystem.ordering.Domain.OrderDetail;
 import com.beyond.ordersystem.ordering.Domain.OrderStatus;
 import com.beyond.ordersystem.ordering.Domain.Ordering;
@@ -36,15 +37,17 @@ public class OrderingService {
     private final OrderDetailRepository orderDetailRepository;
     private final StockInventoryService stockInventoryService;
     private final StockDecreaseEventHandler stockDecreaseEventHandler;
+    private final SSEController sseController;
 
     @Autowired
-    public OrderingService(OrderingRepository orderingRepository, MemberRepository memberRepository, ProductRepository productRepository, OrderDetailRepository orderDetailRepository, StockInventoryService stockInventoryService, StockDecreaseEventHandler stockDecreaseEventHandler) {
+    public OrderingService(OrderingRepository orderingRepository, MemberRepository memberRepository, ProductRepository productRepository, OrderDetailRepository orderDetailRepository, StockInventoryService stockInventoryService, StockDecreaseEventHandler stockDecreaseEventHandler, SSEController sseController) {
         this.orderingRepository = orderingRepository;
         this.memberRepository = memberRepository;
         this.productRepository = productRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.stockInventoryService = stockInventoryService;
         this.stockDecreaseEventHandler = stockDecreaseEventHandler;
+        this.sseController = sseController;
     }
 
 
@@ -66,17 +69,17 @@ public class OrderingService {
 
             int quantity = dto.getProductCount();
 
-            if(product.getName().contains("sale")){
+            if (product.getName().contains("sale")) {
                 //redis를 통한 재고관리 및 재고잔량 확인
 
                 int newQuantity = stockInventoryService.decreaseStock(dto.getProductId(), dto.getProductCount()).intValue();
-                if(newQuantity < 0){
+                if (newQuantity < 0) {
                     throw new IllegalArgumentException("재고 부족");
                 }
 //                rdb에 재고를 업데이트. rabbitmq를 통해 비동기적으로 이벤트 처리
                 stockDecreaseEventHandler.publish(new StockDecreaseEvent(product.getId(), dto.getProductCount()));
-            }else{
-                if(product.getStockQuantity() < quantity){
+            } else {
+                if (product.getStockQuantity() < quantity) {
                     throw new IllegalArgumentException("재고 부족");
                 }
             }
@@ -93,7 +96,8 @@ public class OrderingService {
         }
 
         Ordering savedOrdering = orderingRepository.save(ordering);
-        return savedOrdering;
+        sseController.publishMessage(savedOrdering.fromEntity(), "admin@test");
+        return ordering;
     }
 
     public List<OrderListResDto> listorder() {
@@ -107,9 +111,9 @@ public class OrderingService {
     }
 
 
-    public List<OrderListResDto> myOrders(){
+    public List<OrderListResDto> myOrders() {
         Member member = memberRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
-                .orElseThrow(()-> new EntityNotFoundException("member not found"));
+                .orElseThrow(() -> new EntityNotFoundException("member not found"));
         List<Ordering> orderings = orderingRepository.findByMember(member);
         List<OrderListResDto> orderListResDtos = new ArrayList<>();
         for (Ordering order : orderings) {
@@ -118,15 +122,14 @@ public class OrderingService {
         return orderListResDtos;
     }
 
-    public Ordering orderCancel(Long id){
+    public Ordering orderCancel(Long id) {
         Ordering ordering = orderingRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("not found order"));
+                .orElseThrow(() -> new EntityNotFoundException("not found order"));
         ordering.updateStatus(OrderStatus.CANCELED);
         return ordering;
     }
+
 }
-
-
 //    public Ordering orderCreate(OrderSaveReqDto dto){
 //        // ordering 생성 : member_id, status
 //        Member member = memberRepository.findById(dto.getMemberId())
@@ -141,12 +144,11 @@ public class OrderingService {
 //                    .orElseThrow(()->new EntityNotFoundException("product is not found"));
 //            OrderDetail orderDetail = OrderDetail.builder()
 //                    .product(product)
-//                    .quantity(orderDto.getProductCount())
+//                    .quantity(quantity)
 //                    .ordering(ordering)
 //                    .build();
 //            orderDetailRepository.save(orderDetail);   // 쉬운 방법임. 걍 한번 돌면서
 //        }
-//
 //        return ordering;
 //    }
 //}

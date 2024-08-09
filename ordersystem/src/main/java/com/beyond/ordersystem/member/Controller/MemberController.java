@@ -49,6 +49,7 @@ public class MemberController {
         this.jwtTokenProvider = jwtTokenProvider;
         this.redisTemplate = redisTemplate;
     }
+
     @PostMapping("/create")
     public ResponseEntity<?> memberCreate (@Valid @RequestBody MemberSaveReqDto createDto) {
         memberService.memberCreate(createDto);
