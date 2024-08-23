@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ordersystem.iml" filepath="$PROJECT_DIR$/.idea/ordersystem.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ordersystem.ordersystem.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ordersystem.ordersystem.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ordersystem.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ordersystem.main.iml" />
     </modules>
   </component>
 </project>
