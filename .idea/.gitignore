@@ -1,6 +1,6 @@
 # Default ignored files
 /shelf/
 /workspace.xml
-ordersystem/src/main/resources/application.yml
-ordersystem/src/main/resources/application-local.yml
-ordersystem/src/main/resources/application-prod.yml
+#ordersystem/src/main/resources/application.yml
+#ordersystem/src/main/resources/application-local.yml
+#ordersystem/src/main/resources/application-prod.yml
