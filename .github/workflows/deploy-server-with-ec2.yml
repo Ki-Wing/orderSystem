@@ -12,14 +12,12 @@ jobs:
       - name: checkout branch
         uses: actions/checkout@v2
 
-#        자바 설치
       - name: setup java
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          java-version: 11
           distribution: 'temurin'
 
-#          build
       - name: build jar
         working-directory: .
         run: |
@@ -31,7 +29,7 @@ jobs:
         with:
           host: ec2-3-36-52-95.ap-northeast-2.compute.amazonaws.com
           username: ubuntu
-#          pem키를 통해 해당 인스턴스에 접근
+          #          pemkey를 통해 해당 인스턴스에 접근
           key: ${{secrets.EC2_PEMKEY}}
           source: "./build/libs/*.jar"
           target: "/home/ubuntu"
@@ -40,19 +38,19 @@ jobs:
         with:
           host: ec2-3-36-52-95.ap-northeast-2.compute.amazonaws.com
           username: ubuntu
+          #          pemkey를 통해 해당 인스턴스에 접근
           key: ${{secrets.EC2_PEMKEY}}
           script: |
-            if ! type java > /dev/null; then
+            if ! type java > dev/null; then
               sudo apt-get update && sudo apt-get install openjdk-11-jdk -y
             else
-              echo "java is already installed"
+              echo "java is already  installed"
             fi
             sudo killall java
-            nohup java -jar /home/ubuntu/build/libs/*.jar \
-#            aws -> 레디스 구성 endpoint
-            --spring.redis.host=${{secrets.REDIS_HOST}} \
-            --spring.datasource.url= jdbc:mariadb://${{secrets.DB_HOST}}:3306/ordersystem \
-            --spring.datasource.username=admin \
-            --spring.datasource.password=${{secrets.DB_PW}} \
-            --cloud.aws.credentials.access-key=${{secrets.S3_KEY}} \
-            --cloud.aws.credentials.secret-key=${{secrets.S3_SECRET}} \
+            nohub java -jar /home/ubuntu/build/libs/*.jar \
+            -- spring.redis.host=${{secrets.REDIS_HOST}} \
+            -- spring.datasource.url= jdbc:mariadb://${{secrets.DB_HOST}}:3306/shop \
+            -- spring.datasource.username= admin \
+            -- spring.datasource.password= ${{secrets.DB_PW}} \
+            -- spring.aws.credentials.access-key=${{secrets.S3_key}} \
+            -- spring.aws.credentials.secret-key=${{secrets.S3_SECRET}} > /home/ubuntu/app.log 2>&1 &
