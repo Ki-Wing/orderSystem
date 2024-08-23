@@ -11,6 +11,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="ordersystem.ordersystem" target="11" />
       <module name="ordersystem.ordersystem.main~1" target="11" />
       <module name="ordersystem.ordersystem.test~1" target="11" />
     </bytecodeTargetLevel>
