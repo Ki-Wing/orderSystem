@@ -49,7 +49,6 @@ public class MemberController {
         this.jwtTokenProvider = jwtTokenProvider;
         this.redisTemplate = redisTemplate;
     }
-
     @PostMapping("/create")
     public ResponseEntity<?> memberCreate (@Valid @RequestBody MemberSaveReqDto createDto) {
         memberService.memberCreate(createDto);
@@ -69,8 +68,8 @@ public class MemberController {
         ResponseEntity<CommonResDto> result = new ResponseEntity<>(commonResDto, HttpStatus.OK);
         return result;
     }
-    
-    
+
+
     //본인 회원정보만 조회 가능
     @GetMapping("/myinfo")
     public ResponseEntity<MemberResDto> myinfo() {
@@ -115,7 +114,7 @@ public class MemberController {
         Claims claims = null;
 
         try {
-            
+
             // 코드를 통해 rt 검증
             claims = Jwts.parser()
                     .setSigningKey(secretKey)
@@ -127,7 +126,7 @@ public class MemberController {
         }
         String email = claims.getSubject();
         String role = claims.get("role").toString();
-        
+
         //redis를 조회하여 rt 추가 검증
         Object obj = redisTemplate.opsForValue().get(email);
 //        if(obj == null || (obj != null && !obj.toString().equals(rt))){

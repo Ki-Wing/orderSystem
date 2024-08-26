@@ -48,9 +48,9 @@ public class MemberService {
 
 
     public MemberResDto myinfo(){
-       Member member = memberRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
-               .orElseThrow(()->new EntityNotFoundException("member not found"));
-       return member.fromEntity();
+        Member member = memberRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(()->new EntityNotFoundException("member not found"));
+        return member.fromEntity();
     }
 
     public Member login(MemberLoginDto dto){
