@@ -17,8 +17,8 @@ jobs:
       - name: dockerhub login
         uses: docker/login-actions@v1
         with:
-          username: {{secrets.DOCKER_USERENAME}}
-          password: {{secrets.DOCKER_PASSWORD}}
+          username: ${{secrets.DOCKER_USERENAME}}
+          password: ${{secrets.DOCKER_PASSWORD}}
 
       - name: push to dockerhub
         run: docker push ynlee557/ordersystem:latest
