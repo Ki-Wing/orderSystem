@@ -4,6 +4,7 @@ FROM openjdk:11 AS stage1
 WORKDIR /app
 
 COPY gradlew .
+RUN chmod +x gradlew
 COPY gradle gradle
 COPY src src
 COPY build.gradle .
