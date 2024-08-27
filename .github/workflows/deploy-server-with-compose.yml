@@ -15,7 +15,7 @@ jobs:
         run: docker build -t ynlee557/ordersystem:latest .
 
       - name: dockerhub login
-        uses: docker/login-actions@v1
+        uses: docker/login-action@v1
         with:
           username: ${{secrets.DOCKER_USERENAME}}
           password: ${{secrets.DOCKER_PASSWORD}}
