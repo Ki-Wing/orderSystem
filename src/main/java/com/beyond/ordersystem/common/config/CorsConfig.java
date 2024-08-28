@@ -16,3 +16,5 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowCredentials(true); //보안처리
     }
 }
+
+
