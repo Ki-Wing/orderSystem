@@ -27,7 +27,7 @@ jobs:
         uses: appleboy/ssh-action@master
 
         with:
-          host: ec2-3-34-43-81.ap-northeast-2.compute.amazonaws.com
+          host: ec2-13-209-12-171.ap-northeast-2.compute.amazonaws.com
           username: ubuntu
           key: ${{secrets.EC2_PEMKEY}}
           script: |
